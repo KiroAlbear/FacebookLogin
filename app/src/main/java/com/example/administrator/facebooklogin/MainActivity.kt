@@ -30,35 +30,14 @@ var callbackmanager: CallbackManager? = null
 class MainActivity : AppCompatActivity() {
 
     var switch: Boolean = false
+    var data: MutableMap<String, String>? = mutableMapOf()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-/////////////////////////////////////////////////////////////////////////////////////////
-//            callbackmanager = CallbackManager.Factory.create()
-//
-//
-//            //login_button.setReadPermissions(Arrays.asList("email"))
-//            login_button.registerCallback(callbackmanager,object : FacebookCallback<LoginResult> {
-//                override fun onSuccess(result: LoginResult?) {
-//                     conditiontext.text="onSuccess"
-//                }
-//
-//                override fun onCancel() {
-//                    conditiontext.text="onCancel"
-//                }
-//
-//                override fun onError(error: FacebookException?) {
-//                    conditiontext.text="onError"
-//                }
-//
-//            })
-////////////////////////////////////////////////////////////////////////////////
-
-
         FacebookSdk.sdkInitialize(FacebookSdk.getApplicationContext())
         login_button.setReadPermissions(Arrays.asList(
-                "public_profile", "email",""))
+                "public_profile", "email", ""))
 
         // LoginManager.getInstance().setLoginBehavior(LoginBehavior.WEB_ONLY);
         callbackmanager = CallbackManager.Factory.create()
@@ -71,36 +50,39 @@ class MainActivity : AppCompatActivity() {
                         var request: GraphRequest = GraphRequest.newMeRequest(loginResult.accessToken, object : GraphRequest.GraphJSONObjectCallback {
                             override fun onCompleted(`object`: JSONObject?, response: GraphResponse?) {
 
-                                if(`object`!!.has("email"))
-                                {
-                                    var email = `object`!!.getString("email")
+                                if (`object`!!.has("email")) {
 
+                                    data!!.put("email", `object`!!.getString("email"))
                                 }
 
-                                if(`object`!!.has("id"))
-                                {
-                                    var id = `object`!!.getString("id")
-                                }
+                                if (`object`!!.has("id")) {
 
-
-                                if(`object`!!.has("name"))
-                                {
-                                    var name = `object`!!.getString("name")
+                                    data!!.put("id", `object`!!.getString("id"))
                                 }
 
 
-                                if(`object`!!.has("first_name"))
-                                {
-                                    var first_name = `object`!!.getString("first_name")
+                                if (`object`!!.has("name")) {
+
+                                    data!!.put("name", `object`!!.getString("name"))
                                 }
 
 
-                                if(`object`!!.has("last_name"))
-                                {
-                                    var last_name = `object`!!.getString("last_name")
-                                    conditiontext.text = last_name
+                                if (`object`!!.has("first_name")) {
+
+                                    data!!.put("first_name", `object`!!.getString("first_name"))
                                 }
 
+
+                                if (`object`!!.has("last_name")) {
+
+                                    data!!.put("last_name", `object`!!.getString("last_name"))
+                                }
+
+                                var datastr = ""
+                                for (i in data!!) {
+                                    datastr += i.key + " :" + i.value+"\n"
+                                }
+                                conditiontext.text = datastr
 
 
                             }
@@ -110,6 +92,7 @@ class MainActivity : AppCompatActivity() {
                         parameters.putString("fields", "id,name,email,gender,birthday,first_name,last_name")
                         request.parameters = parameters
                         request.executeAsync()
+
 
                     }
 
@@ -121,7 +104,6 @@ class MainActivity : AppCompatActivity() {
 
                     }
                 })
-
 
     }
 
